@@ -12,7 +12,7 @@ class FormHelper {
     }
 
     IsEmail(value) {
-        debugger;
+      
         return !EmailRegx.test(value);
     }
 

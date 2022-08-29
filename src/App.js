@@ -16,6 +16,7 @@ import { getToken } from "./Helper/SessionHelper";
 import CreatePasswordPage from "./Pages/AccountRecover/CreatePasswordPage";
 import SendOTPPage from "./Pages/AccountRecover/SendOTPPage";
 import VerifyOTPPage from "./Pages/AccountRecover/VerifyOTPPage";
+import ProductsPage from "./Pages/ProductsPage";
 
 function App() {
   if (getToken()) {
@@ -24,6 +25,7 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<DashboardPage />} />
+            <Route exact path="/products" element={<ProductsPage />} />
             <Route exact path="/Create" element={<CreatePage />} />
             <Route exact path="/All" element={<NewPage />} />
             <Route exact path="/Progress" element={<ProgressPage />} />
@@ -43,6 +45,7 @@ function App() {
           <Routes>
             <Route exact path="/" element={<Navigate to="/Login" replace={true} />} />
             <Route exact path="/Login" element={<LoginPage />} />
+           
             <Route exact path="/Registration" element={<RegistrationPage />} />
             <Route exact path="/Forgetpass" element={<ForgetPassword />} />
             <Route exact path="/SendOTP" element={<SendOTPPage />} />

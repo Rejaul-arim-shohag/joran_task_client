@@ -15,7 +15,7 @@ const Dashboard = () => {
                     {
                         summaryList.map((item, idx) => {
                             return (
-                                <div className="col-12 col-lg-3 col-sm-6 col-md-3  p-2">
+                                <div className="col-12 col-lg-3 col-sm-6 col-md-3 p-2">
                                     <div className="card h-100">
                                         <div className="card-body">
                                             <h5 className="animated fadeInUp">Total {item._id}</h5>
