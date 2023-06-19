@@ -2,21 +2,22 @@ import React from 'react';
 import { useRef } from 'react';
 import { Container, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { createNewTask } from '../../ApiRequest/APIRequest';
+import { createNewProduct } from '../../ApiRequest/APIRequest';
 import { ErrorToast, IsEmpty } from '../../Helper/FormHelper';
 
 const Create = () => {
-    let titleRef, descriptionRef=useRef();
+    let nameRef, priceRef, codeRef, categoryRef, imgUrlRef=useRef();
     let navigate=useNavigate()
     const createNew =()=>{
-        const title = titleRef.value;
-        const deccription = descriptionRef.value;
-        if(IsEmpty(title)){
-            ErrorToast("Title is required")
-        } else if(IsEmpty(deccription)){
-            ErrorToast("deccription is required")
+        const productName = nameRef.value;
+        const price = priceRef.value;
+        const productCode = codeRef.value;
+        const category = categoryRef.value;
+        const imageUrl = imgUrlRef.value;
+        if(IsEmpty(productName)){
+            ErrorToast("Product Name is required")
         } else{
-            createNewTask(title,deccription)
+            createNewProduct(productName,price, productCode, category, imageUrl)
             .then((res)=>{
                 if(res===true){
                     navigate("/All")
@@ -32,10 +33,17 @@ const Create = () => {
                     <div className="card-body">
                         <h4 >Create New</h4>
                         <br/>
-                        <input ref={(input)=>titleRef=input}  placeholder="Task Name" className="form-control animated fadeInUp" type="text"/>
+                        <input ref={(input)=>nameRef=input}  placeholder="Product Name" className="form-control animated fadeInUp" type="text"/>
                         <br/>
-                        <textarea ref={(input)=>descriptionRef=input} rows={5} placeholder="Task Description" className="form-control animated fadeInUp" type="text"/>
+                        <input ref={(input)=>priceRef=input}  placeholder="Price" className="form-control animated fadeInUp" type="text"/>
                         <br/>
+                        <input ref={(input)=>codeRef=input}  placeholder="code" className="form-control animated fadeInUp" type="text"/>
+                        <br/>
+                        <input ref={(input)=>categoryRef=input}  placeholder="Category Name" className="form-control animated fadeInUp" type="text"/>
+                        <br/>
+                        <input ref={(input)=>imgUrlRef=input}  placeholder="Image Url" className="form-control animated fadeInUp" type="text"/>
+                        <br/>
+                       
                         <button onClick={createNew} className="btn float-end btn-primary">Create</button>
                     </div>
                 </div>

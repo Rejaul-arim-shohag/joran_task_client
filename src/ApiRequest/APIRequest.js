@@ -7,11 +7,7 @@ import { HideLoader, ShowLoader } from "../redux/stateSlice/settingSlice";
 //business table product slice
 import { SetALLProduct } from "../redux/stateSlice/productSlice";
 
-import { SetCanceledTask, setCompletedTask, setNewTask, SetProgressTask } from "../redux/stateSlice/taskSlice";
-import { SetSummary } from "../redux/stateSlice/summarySlice";
-import { SetProfile } from "../redux/stateSlice/profileSlice";
-
-const baseUrl = "http://localhost:5000/api/v1";
+const baseUrl = "https://joran-backend.onrender.com/api/v1"; 
 
 const AxiosHeader = { headers: { "token": getToken() } }
 export function registrationRequest(email, firstName, lastName, userName, password) {
@@ -83,8 +79,6 @@ export function LoginRequest(email, password) {
 
 }
 
-
-//bussiness table management
 export async function GetProductList() {
     store.dispatch(ShowLoader())
     let URL = baseUrl + "/allProducts" ;
@@ -104,10 +98,10 @@ export async function GetProductList() {
     }
 }
 
-export function ProductDelete(productArray) {
+export function ProductDelete(productIds) {
     store.dispatch(ShowLoader())
     let url = baseUrl + "/deleteProduct";
-    return axios.post(url,productArray, AxiosHeader)
+    return axios.post(url,productIds, AxiosHeader)
         .then((res) => {
             store.dispatch(HideLoader())
             if (res.status === 200) {
@@ -126,11 +120,87 @@ export function ProductDelete(productArray) {
         })
 }
 
+export function productFindById(id) {
+    const postBody = {
+        product_id: id,
+    }
+    store.dispatch(ShowLoader())
+    let url = baseUrl + `/findProductById/`;
+    return axios.post(url,postBody, AxiosHeader)
+        .then((res) => {
+            store.dispatch(HideLoader())
+            if (res.status === 200) {
+                return res.data;
+            }
+            else {
+                ErrorToast("Something Went Wrong")
+                return false;
+            }
+        })
+        .catch((err) => {
+            ErrorToast("Something Went Wrong")
+            store.dispatch(HideLoader())
+            return false;
+        })
+}
 
 
+export function createNewProduct(productName,price, productCode, category, imageUrl) {
+    store.dispatch(ShowLoader())
+    const url = baseUrl + "/productCreate";
+    const postBody = {
+        product_name: productName,
+        product_id: productCode,
+        price: price,
+        category_name:category,
+        image:imageUrl
+    }
+    return axios.post(url, postBody, AxiosHeader)
+        .then((result) => {
+            store.dispatch(HideLoader())
+            if (result.status === 200) {
+                SuccessToast("New Task created")
+                return true;
+            } else {
+                ErrorToast("Something Went Wrong")
+                return false;
+            }
+        })
+        .catch((err) => {
+            ErrorToast("Something Went Wrong")
+            store.dispatch(HideLoader())
+            return false
+        })
+}
 
-
-
+export function updateProduct(_id,productName,price, category, imageUrl) {
+    debugger
+    store.dispatch(ShowLoader())
+    const url = baseUrl + "/updateProduct";
+    const postBody = {
+        product_id:_id,
+        product_name: productName,
+        price: price,
+        category_name:category,
+        image:imageUrl
+    }
+    return axios.post(url, postBody, AxiosHeader)
+        .then((result) => {
+            store.dispatch(HideLoader())
+            if (result.status === 200) {
+                SuccessToast("Update Sucecss")
+                return true;
+            } else {
+                ErrorToast("Something Went Wrong")
+                return false;
+            }
+        })
+        .catch((err) => {
+            ErrorToast("Something Went Wrong")
+            store.dispatch(HideLoader())
+            return false
+        })
+}
 
 
 export function profileUpdateRequest(email, firstName, lastName, mobile, password, photo) {
@@ -166,181 +236,29 @@ export function profileUpdateRequest(email, firstName, lastName, mobile, passwor
 
 }
 
-
-
-
-export function createNewTask(title, description) {
+export function LogoutRequest() {
     store.dispatch(ShowLoader())
-    const url = baseUrl + "/createTask";
-    const postBody = {
-        title: title,
-        description: description,
-        status: "New"
-    }
-    return axios.post(url, postBody, AxiosHeader)
-        .then((result) => {
+    const url = baseUrl + "/user_logout";
+    return axios.post(url, AxiosHeader)
+        .then((res) => {
             store.dispatch(HideLoader())
-            if (result.status === 200) {
-                SuccessToast("New Task created")
+            if (res.status === 200) {
                 return true;
-            } else {
-                ErrorToast("Something Went Wrong")
+            }
+            else {
                 return false;
             }
         })
         .catch((err) => {
             ErrorToast("Something Went Wrong")
             store.dispatch(HideLoader())
-            return false
-        })
-}
-
-export function ListTaskByStatus(Status) {
-    store.dispatch(ShowLoader())
-    const url = baseUrl + "/listsTaskByStatus/" + Status;
-    return axios.get(url, AxiosHeader)
-        .then((result) => {
-            store.dispatch(HideLoader());
-            if (result.status === 200) {
-                if (Status === "New") {
-                    store.dispatch(setNewTask(result.data["data"]))
-                }
-                else if (Status === "Completed") {
-                    store.dispatch(setCompletedTask(result.data["data"]))
-                }
-                else if (Status === "Canceled") {
-                    store.dispatch(SetCanceledTask(result.data["data"]))
-                }
-                else if (Status === "Progress") {
-                    store.dispatch(SetProgressTask(result.data["data"]))
-                }
-            } else {
-                ErrorToast("Something Went Wrong")
-                return false
-            }
-        })
-        .catch((err) => {
-            store.dispatch(HideLoader())
-            ErrorToast("Something Went Wrong")
-            return false
-        })
-}
-
-export function SummaryRequest() {
-    store.dispatch(ShowLoader())
-    let url = baseUrl + "/taskStatusCount";
-    axios.get(url, AxiosHeader)
-        .then((res) => {
-            store.dispatch(HideLoader())
-            if (res.status === 200) {
-                store.dispatch(SetSummary(res.data['data']))
-            }
-            else {
-                ErrorToast("Something Went Wrong")
-            }
-        }).catch((err) => {
-            ErrorToast("Something Went Wrong")
-            store.dispatch(HideLoader())
-        });
-}
-
-
-
-export function UpdateStatusRequest(id, status) {
-    store.dispatch(ShowLoader())
-    let url = baseUrl + "/updateTaskStatus/" + id + "/" + status;
-    return axios.get(url, AxiosHeader).then((res) => {
-        store.dispatch(HideLoader())
-        if (res.status === 200) {
-            SuccessToast("Status Updated")
-            return true;
-        }
-        else {
-            ErrorToast("Something Went Wrong")
-            return false;
-        }
-    }).catch((err) => {
-        ErrorToast("Something Went Wrong")
-        store.dispatch(HideLoader())
-        return false;
-    });
-}
-
-export function GetProfileDetails() {
-    store.dispatch(ShowLoader())
-    let url = baseUrl + "/profileDetails";
-    axios.get(url, AxiosHeader).then((res) => {
-        store.dispatch(HideLoader())
-        if (res.status === 200) {
-            store.dispatch(SetProfile(res.data['data'][0]))
-        }
-        else {
-            ErrorToast("Something Went Wrong")
-        }
-    }).catch((err) => {
-        ErrorToast("Something Went Wrong")
-        store.dispatch(HideLoader())
-    });
-}
-
-
-//recover passworad steap 1
-export function RecoverVerifyEmailRequest(email) {
-    debugger;
-    store.dispatch(ShowLoader())
-    let url = baseUrl + "/RecoverVerifyEmail/" + email;
-    return axios.get(url).then((res) => {
-        store.dispatch(HideLoader())
-        if (res.status === 200) {
-            return true;
-        }
-        else {
-            ErrorToast("Something Went Wrong")
-        }
-    }).catch((err) => {
-        ErrorToast("Something Went Wrong")
-        debugger;
-        store.dispatch(HideLoader())
-    });
-}
-
-//recover verify OTP 2
-export function RecoverVerifyOTPRequest(email, OTP) {
-    store.dispatch(ShowLoader())
-    let url = baseUrl + "/RecoverVerifyEmail/" + email + "/" + OTP;
-    return axios.get(url).then((res) => {
-        store.dispatch(HideLoader())
-        if (res.status === 200) {
-            return true;
-        }
-        else {
-            ErrorToast("Something Went Wrong")
-        }
-    }).catch((err) => {
-        ErrorToast("Something Went Wrong")
-        store.dispatch(HideLoader())
-    });
-}
-
-//recover password steap 3, reset password
-export function RecoverRestePassRequest(email, OTP, password) {
-    store.dispatch(ShowLoader());
-    let url = baseUrl + "/RecoverRestePass/" + email + "/" + OTP;
-    const postBody = {
-        email: email,
-        OTP: OTP,
-        password: password
-    }
-    return axios.post(url, postBody).then((res) => {
-        store.dispatch(HideLoader())
-        if (res.status === 200) {
-            return true;
-        } else {
-            return false;
-        }
-    })
-        .catch((err) => {
-            store.dispatch(HideLoader())
             return false;
         })
+
 }
+
+
+
+
+
+
