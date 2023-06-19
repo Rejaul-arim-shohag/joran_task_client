@@ -49,7 +49,7 @@ const MasterLayout = (props) => {
                             <div className="user-dropdown-content ">
                                 <div className="mt-4 text-center">
                                     <img className="icon-nav-img" src={getUserDetails()["photo"]} alt="" />
-                                    <h6>{getUserDetails()["firstName"]}</h6> 
+                                    <h6>{getUserDetails()["firstName"]}</h6>
                                     <hr className="user-dropdown-divider  p-0" />
                                 </div>
                                 <NavLink to="/Profile" className="side-bar-item">
@@ -68,13 +68,8 @@ const MasterLayout = (props) => {
 
             <div ref={(div) => { sideNavRef = div }} className="side-nav-open">
 
-                <NavLink className={(navData) => navData.isActive ? "side-bar-item-active side-bar-item mt-2" : "side-bar-item mt-2"} to="/" end>
-                    <RiDashboardLine className="side-bar-item-icon" />
-                    <span className="side-bar-item-caption">Dashboard</span>
-                </NavLink>
-
-                <NavLink className={(navData) => navData.isActive ? "side-bar-item-active side-bar-item mt-2" : "side-bar-item mt-2"} to="/products" >
-                    <AiOutlineEdit className="side-bar-item-icon" />
+                <NavLink className={(navData) => navData.isActive ? "side-bar-item-active side-bar-item mt-2" : "side-bar-item mt-2"} to="/All" >
+                    <BsListNested className="side-bar-item-icon" />
                     <span className="side-bar-item-caption">Products</span>
                 </NavLink>
 
@@ -82,27 +77,6 @@ const MasterLayout = (props) => {
                     <AiOutlineEdit className="side-bar-item-icon" />
                     <span className="side-bar-item-caption">Create New</span>
                 </NavLink>
-
-                <NavLink className={(navData) => navData.isActive ? "side-bar-item-active side-bar-item mt-2" : "side-bar-item mt-2"} to="/All" >
-                    <BsListNested className="side-bar-item-icon" />
-                    <span className="side-bar-item-caption">New Task</span>
-                </NavLink>
-
-                <NavLink className={(navData) => navData.isActive ? "side-bar-item-active side-bar-item mt-2" : "side-bar-item mt-2"} to="/Progress" >
-                    <BsHourglass className="side-bar-item-icon" />
-                    <span className="side-bar-item-caption">In Progress</span>
-                </NavLink>
-
-                <NavLink className={(navData) => navData.isActive ? "side-bar-item-active side-bar-item mt-2" : "side-bar-item mt-2"} to="/Completed" >
-                    <AiOutlineCheckCircle className="side-bar-item-icon" />
-                    <span className="side-bar-item-caption">Completed</span>
-                </NavLink>
-
-                <NavLink className={(navData) => navData.isActive ? "side-bar-item-active side-bar-item mt-2" : "side-bar-item mt-2"} to="/Canceled" >
-                    <MdOutlineCancelPresentation className="side-bar-item-icon" />
-                    <span className="side-bar-item-caption">Canceled</span>
-                </NavLink>
-
             </div>
 
             <div ref={(div) => contentRef = div} className="content">

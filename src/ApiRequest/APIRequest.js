@@ -5,59 +5,24 @@ import store from "../redux/store/store";
 import { HideLoader, ShowLoader } from "../redux/stateSlice/settingSlice";
 
 //business table product slice
-import {SetALLProduct, SetTotal} from "../redux/stateSlice/productSlice";
+import { SetALLProduct } from "../redux/stateSlice/productSlice";
 
 import { SetCanceledTask, setCompletedTask, setNewTask, SetProgressTask } from "../redux/stateSlice/taskSlice";
 import { SetSummary } from "../redux/stateSlice/summarySlice";
 import { SetProfile } from "../redux/stateSlice/profileSlice";
 
-const baseUrl = "http://localhost:8080/api/v1";
+const baseUrl = "http://localhost:5000/api/v1";
 
 const AxiosHeader = { headers: { "token": getToken() } }
-
-//bussiness table management
-export async function GetProductList(pageNo, perPage, searchKeyword) {
+export function registrationRequest(email, firstName, lastName, userName, password) {
     store.dispatch(ShowLoader())
-    let URL = baseUrl + "/ProductList/" + pageNo + "/" + perPage + "/" + searchKeyword;
-    try {
-        const result = await axios.get(URL)
-
-        store.dispatch(HideLoader())
-        if (result.status === 200 && result.data['status'] === "success") {
-            if (result.data['data'][0]['Rows'].length > 0) {
-                store.dispatch(SetALLProduct(result.data['data'][0]['Rows']))
-                store.dispatch(SetTotal(result.data['data'][0]['Total'][0]['count']))
-            } else {
-                store.dispatch(SetALLProduct([]))
-                store.dispatch(SetTotal(0))
-                ErrorToast("No Data Found")
-            }
-        } else {
-            ErrorToast("Something Went Wrong")
-        }
-    }
-
-    catch (e) {
-        ErrorToast("Something Went Wrong")
-        store.dispatch(HideLoader())
-    }
-}
-
-
-
-
-
-
-export function registrationRequest(email, firstName, lastName, mobile, password, photo) {
-    store.dispatch(ShowLoader())
-    const url = baseUrl + "/registration";
+    const url = baseUrl + "/user_signup";
     const postBody = {
         email: email,
-        firstName: firstName,
-        lastName: lastName,
-        mobile: mobile,
+        first_name: firstName,
+        last_name: lastName,
+        user_name: userName,
         password: password,
-        photo: photo
     }
     return axios.post(url, postBody)
         .then((res) => {
@@ -69,7 +34,7 @@ export function registrationRequest(email, firstName, lastName, mobile, password
                         return false;
                     }
                     else {
-                        ErrorToast("Something Went Wrong")
+                        ErrorToast("Something Went Wrong1")
                         return false;
                     }
                 }
@@ -79,15 +44,93 @@ export function registrationRequest(email, firstName, lastName, mobile, password
                 }
             }
             else {
-                ErrorToast("Something Went Wrong")
+
+                ErrorToast("Something Went Wrong2")
                 return false;
             }
         }).catch((err) => {
+            console.log("err", err)
             store.dispatch(HideLoader())
-            ErrorToast("Something Went Wrong")
+            ErrorToast("Something Went Wrong3")
             return false;
         })
 }
+export function LoginRequest(email, password) {
+    store.dispatch(ShowLoader())
+    const url = baseUrl + "/user_login";
+
+    const postBody = {
+        email: email,
+        password: password
+    }
+    return axios.post(url, postBody)
+        .then((res) => {
+            store.dispatch(HideLoader())
+            if (res.status === 200) {
+                setToken(res.data["token"])
+                setUserDetails(res.data["data"])
+                SuccessToast("Login Success")
+                return true;
+            }
+            else {
+                ErrorToast("Invalid email or password")
+                return false;
+            }
+        }).catch((err) => {
+            ErrorToast("Something Went Wrong")
+            store.dispatch(HideLoader())
+        })
+
+}
+
+
+//bussiness table management
+export async function GetProductList() {
+    store.dispatch(ShowLoader())
+    let URL = baseUrl + "/allProducts" ;
+    try {
+        const result = await axios.get(URL, AxiosHeader)
+        store.dispatch(HideLoader())
+        if (result.status === 200 && result.data['status'] === "success") {
+            store.dispatch(SetALLProduct(result.data.data))
+        } else {
+            ErrorToast("Something Went Wrong")
+        }
+    }
+
+    catch (e) {
+        ErrorToast("Something Went Wrong")
+        store.dispatch(HideLoader())
+    }
+}
+
+export function ProductDelete(productArray) {
+    store.dispatch(ShowLoader())
+    let url = baseUrl + "/deleteProduct";
+    return axios.post(url,productArray, AxiosHeader)
+        .then((res) => {
+            store.dispatch(HideLoader())
+            if (res.status === 200) {
+                SuccessToast("Delete Successful")
+                return true;
+            }
+            else {
+                ErrorToast("Something Went Wrong")
+                return false;
+            }
+        })
+        .catch((err) => {
+            ErrorToast("Something Went Wrong")
+            store.dispatch(HideLoader())
+            return false;
+        })
+}
+
+
+
+
+
+
 
 
 export function profileUpdateRequest(email, firstName, lastName, mobile, password, photo) {
@@ -124,33 +167,7 @@ export function profileUpdateRequest(email, firstName, lastName, mobile, passwor
 }
 
 
-export function LoginRequest(email, password) {
-    store.dispatch(ShowLoader())
-    const url = baseUrl + "/login";
 
-    const postBody = {
-        email: email,
-        password: password
-    }
-    return axios.post(url, postBody)
-        .then((res) => {
-            store.dispatch(HideLoader())
-            if (res.status === 200) {
-                setToken(res.data["token"])
-                setUserDetails(res.data["data"])
-                SuccessToast("Login Success")
-                return true;
-            }
-            else {
-                ErrorToast("Invalid email or password")
-                return false;
-            }
-        }).catch((err) => {
-            ErrorToast("Something Went Wrong")
-            store.dispatch(HideLoader())
-        })
-
-}
 
 export function createNewTask(title, description) {
     store.dispatch(ShowLoader())
@@ -227,27 +244,7 @@ export function SummaryRequest() {
         });
 }
 
-export function DeleteRequest(id) {
-    store.dispatch(ShowLoader())
-    let url = baseUrl + "/deleteTask/" + id;
-    return axios.get(url, AxiosHeader)
-        .then((res) => {
-            store.dispatch(HideLoader())
-            if (res.status === 200) {
-                SuccessToast("Delete Successful")
-                return true;
-            }
-            else {
-                ErrorToast("Something Went Wrong")
-                return false;
-            }
-        })
-        .catch((err) => {
-            ErrorToast("Something Went Wrong")
-            store.dispatch(HideLoader())
-            return false;
-        })
-}
+
 
 export function UpdateStatusRequest(id, status) {
     store.dispatch(ShowLoader())

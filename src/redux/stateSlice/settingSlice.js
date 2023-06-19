@@ -7,7 +7,6 @@ export const settingSlice = createSlice({
     },
     reducers:{
         ShowLoader:(state)=>{
-            debugger;
             state.loader=""
         },
         HideLoader:(state)=>{

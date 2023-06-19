@@ -44,7 +44,7 @@ const Login = () => {
                                     <span>
                                         <Link className="text-center ms-3 h6 animated fadeInUp" to="/Registration">Sign Up </Link>
                                         <span className="ms-1">|</span>
-                                        <Link className="text-center ms-3 h6 animated fadeInUp" to="/SendOTP">Forget Password</Link>
+                                        {/* <Link className="text-center ms-3 h6 animated fadeInUp" to="/SendOTP">Forget Password</Link> */}
                                     </span>
                                 </div>
                             </div>
